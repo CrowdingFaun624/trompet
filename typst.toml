@@ -8,6 +8,7 @@ description = "Draw Tromp lambda diagrams."
 repository = "https://github.com/CrowdingFaun624/trompet"
 keywords = [
     "lambda",
+    "lambda calculus",
     "Tromp"
 ]
 categories = ["visualization", "fun"]
