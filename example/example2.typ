@@ -1,4 +1,4 @@
-#import "../src/lib.typ": *
+#import "@preview/trompet:0.1.0": *
 #set page(height: auto, width: 2in)
 
 #tromp(

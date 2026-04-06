@@ -1,4 +1,4 @@
-#import "../src/lib.typ": *
+#import "@preview/trompet:0.1.0": *
 #import "@preview/lambdabus:0.1.0": normalization-steps
 #set page(height: 10in)
 
