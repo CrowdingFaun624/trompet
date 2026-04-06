@@ -68,7 +68,7 @@
     let label = expression.at("label", default: auto)
     if use-labels {
       labels.push((x-max + 0.3, abstraction-y, expression.param, label))
-      if is-base-abstraction and mode == "line" {
+      if is-base-abstraction and mode == "pixel" {
         x += 0.25
       }
     }
