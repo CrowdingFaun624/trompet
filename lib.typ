@@ -1,8 +1,9 @@
 #let tromp(
   expression,
-  use-labels: false,
   mode: "pixel",
   scale: 1.0,
+  style: black,
+  labels: none,
 ) = {
   import "@preview/cetz:0.4.2": canvas, draw
   import "tromp.typ": tromp-recursion
@@ -14,25 +15,29 @@
   if mode not in ("pixel", "line") {
     panic("unknown mode '" + mode + "'")
   }
-  let result = tromp-recursion(parsed-expression, (), 0, 0, use-labels, mode)
+  let result = tromp-recursion(parsed-expression, (), 0, 0, labels != none, mode)
   return canvas(length: 1cm * scale, {
 
     import draw: rect, line, content
-    for (x1, y1, x2, y2, style) in result.lines {
-      if style == auto {
-        style = black
+    for (x1, y1, x2, y2, line-style) in result.lines {
+      if line-style == auto {
+        line-style = style
       }
       if mode == "pixel" {
-        rect((x1, -0.5 * y1), (x2 + 0.25, -0.5 * y2 - 0.25), stroke: none, fill: style)
+        rect((x1, -0.5 * y1), (x2 + 0.25, -0.5 * y2 - 0.25), stroke: none, fill: line-style)
       } else if mode == "line" {
-        line((x1, -0.5 * y1), (x2, -0.5 * y2), stroke: style)
+        line((x1, -0.5 * y1), (x2, -0.5 * y2), stroke: line-style)
       }
     }
 
     for (x, y, param, label) in result.labels {
       let label-content
-      if type(label) == auto {
-        label-content = $italic(param)$
+      if label == auto {
+        if labels == auto {
+          label-content = $italic(param)$
+        } else if type(labels) == function {
+          label-content = labels(param)
+        }
       } else if type(label) == function {
         label-content = label(param)
       } else {
