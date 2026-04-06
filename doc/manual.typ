@@ -1,5 +1,5 @@
 #import "@preview/tidy:0.4.3"
-#import "../src/lib.typ" as trompet: *
+#import "@preview/trompet:0.1.0" as trompet: *
 #import "@preview/lambdabus:0.1.0" as lmd
 
 #show link: content => underline(content, stroke: blue)
