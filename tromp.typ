@@ -5,7 +5,7 @@
   old-y,
   use-labels,
   is-base-abstraction: true,
-  do-label-movement: true,
+  mode
 ) = {
   // list of (x1, y1, x2, y2, style)
   let lines
@@ -34,7 +34,15 @@
     )
 
     let style = expression.at("style", default: auto)
-    lines = ((x, abstraction, x, y, style),)
+    if mode == "pixel" {
+      lines = ()
+      for other-abstraction in range(abstraction, abstractions.len() - 1) {
+        lines.push((x, other-abstraction + 1, x, other-abstraction, style))
+      }
+      lines.push((x, y - 0.5, x, y, style))
+    } else {
+      lines = ((x, abstraction, x, y, style),)
+    }
     // +1 so the next application will bend around this
     x += 1
   }
@@ -44,7 +52,7 @@
     new-abstractions.push(expression.param)
     let abstraction-y = y // height of abstraction line
     y += 1 // new abstraction was added, so future applications must bend over it.
-    let body-result = tromp-recursion(expression.body, new-abstractions, x, y, use-labels, is-base-abstraction: false, do-label-movement: do-label-movement)
+    let body-result = tromp-recursion(expression.body, new-abstractions, x, y, use-labels, is-base-abstraction: false, mode)
     lines = body-result.lines
     labels = body-result.labels
     let new-abstraction-bounds = body-result.abstraction-bounds
@@ -60,7 +68,7 @@
     let label = expression.at("label", default: auto)
     if use-labels {
       labels.push((x-max + 0.3, abstraction-y, expression.param, label))
-      if is-base-abstraction and do-label-movement {
+      if is-base-abstraction and mode == "line" {
         x += 0.25
       }
     }
@@ -68,7 +76,7 @@
 
   else if expression.type == "application" {
     let application-x1 = x
-    let fn-result = tromp-recursion(expression.fn, abstractions, x, y, use-labels, do-label-movement: do-label-movement)
+    let fn-result = tromp-recursion(expression.fn, abstractions, x, y, use-labels, mode)
     lines = fn-result.lines
     labels = fn-result.labels
     abstraction-bounds = fn-result.abstraction-bounds
@@ -76,7 +84,7 @@
     let fn-y = fn-result.y
     let application-x2 = x
     // use the old y because the parameter doesn't have to stretch over the function in the y-direction.
-    let param-result = tromp-recursion(expression.param, abstractions, x, y, use-labels, do-label-movement: do-label-movement)
+    let param-result = tromp-recursion(expression.param, abstractions, x, y, use-labels, mode)
     lines += param-result.lines
     labels += param-result.labels
     // expand abstractions to be widest of both
@@ -87,12 +95,25 @@
     let param-y = param-result.y
     y = calc.max(fn-y, param-y)
     let style = expression.at("style", default: auto)
-    lines.push((application-x1, y, application-x2, y, style))
-    // line to parameter
-    lines.push((application-x2, param-y, application-x2, y, style))
-    y += 1
-    // line to function
-    lines.push((application-x1, fn-y, application-x1, y, style))
+    if mode == "pixel" {
+      lines.push((application-x1 + 0.25, y, application-x2 - 0.25, y, style))
+      // line to parameter
+      if param-y != y {
+        lines.push((application-x2, param-y + 0.5, application-x2, y, style))
+      }
+      y += 1
+      // line to function
+      if fn-y != y {
+        lines.push((application-x1, fn-y + 0.5, application-x1, y, style))
+      }
+    } else {
+      lines.push((application-x1, y, application-x2, y, style))
+      // line to parameter
+      lines.push((application-x2, param-y, application-x2, y, style))
+      y += 1
+      // line to function
+      lines.push((application-x1, fn-y, application-x1, y, style))
+    }
   }
 
   return (

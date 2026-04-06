@@ -14,7 +14,7 @@
   if mode not in ("pixel", "line") {
     panic("unknown mode '" + mode + "'")
   }
-  let result = tromp-recursion(parsed-expression, (), 0, 0, use-labels, do-label-movement: mode == "pixel")
+  let result = tromp-recursion(parsed-expression, (), 0, 0, use-labels, mode)
   return canvas(length: 1cm * scale, {
 
     import draw: rect, line, content
