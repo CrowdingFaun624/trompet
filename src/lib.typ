@@ -1,8 +1,16 @@
+/// Creates a Tromp diagram. -> content
 #let tromp(
+  /// A #link("https://typst.app/universe/package/lambdabus/", [Lambdabus expression]) or result of #typc("expression()"). -> str | dictionary
   expression,
+  /// Either the string #typc("\"pixel\"") or #typc("\"line\""). -> str
   mode: "pixel",
+  /// A float representing the scale from the default pixel size. -> float
   scale: 1.0,
+  /// If using the #typc("\"pixel\"") mode, must be a color. If using the #typc("\"line\"") mode, must be a stroke or a #cetz-link("basics/styling", [CeTZ style]). -> color | stroke | dictionary
   style: black,
+  /// #typc("auto") or a function that takes in a parameter name string and returns content.
+  ///
+  /// Defaults to #typc("param => $italic(param)$"). -> content | auto | none
   labels: none,
 ) = {
   import "@preview/cetz:0.4.2": canvas, draw
@@ -52,12 +60,22 @@
   })
 }
 
-#let expression(expression) = {
+/// Adds additional metadata to an expression made with #typc("value()"), #typc("abstraction()"), or #typc("application()") so that Lambdabus can do math on it.
+#let expression(
+  /// The lambda calculus expression constructed through #typc("value()"), #typc("abstraction()"), or #typc("application()"). -> dictionary
+  expression,
+) = {
   import "@preview/lambdabus:0.1.0": lambda
   return lambda.tag(expression)
 }
 
-#let value(parameter, style: auto) = {
+/// Creates a stylable value.
+#let value(
+  /// The string corresponding to the abstraction parameter. -> str
+  parameter,
+  /// If using the #typc("\"pixel\"") mode, must be #typc("auto") or a color. If using the #typc("\"line\"") mode, must be #typc("auto"), a stroke, or a #cetz-link("basics/styling", [CeTZ style]). If auto, defaults to the whole diagram's default style. -> auto | color | stroke | dictionary
+  style: auto,
+) = {
   return (
     type: "value",
     name: parameter,
@@ -65,7 +83,17 @@
   )
 }
 
-#let abstraction(parameter, body, style: auto, label: auto) = {
+/// Creates a stylable abstraction.
+#let abstraction(
+  /// The string corresponding to the parameter of this abstraction. -> str
+  parameter,
+  /// An expression constructed through #typc("value()"), #typc("abstraction()"), and #typc("application()") or a Lambdabus expression. -> str | dictionary
+  body,
+  /// If using the #typc("\"pixel\"") mode, must be #typc("auto") or a color. If using the #typc("\"line\"") mode, must be #typc("auto"), a stroke, or a #cetz-link("basics/styling", [CeTZ style]). If auto, defaults to the whole diagram's default style. -> auto | color | stroke | dictionary
+  style: auto,
+  /// #typc("auto"), #typc("none"), content, or a function that takes the parameter as a string and returns content. If #typc("auto"), defaults to the whole diagram's label style. -> auto | none | content | function
+  label: auto,
+) = {
   import "@preview/lambdabus:0.1.0": parsing
   let parsed-body = body
   if type(parsed-body) == str {
@@ -80,7 +108,15 @@
   )
 }
 
-#let application(function, parameter, style: auto) = {
+/// Creates a stylable application.
+#let application(
+  /// An expression constructed through #typc("value()"), #typc("abstraction()"), and #typc("application()") or a Lambdabus expression. -> str | dictionary
+  function,
+  /// An expression constructed through #typc("value()"), #typc("abstraction()"), and #typc("application()") or a Lambdabus expression. -> str | dictionary
+  parameter,
+  /// If using the #typc("\"pixel\"") mode, must be #typc("auto") or a color. If using the #typc("\"line\"") mode, must be #typc("auto"), a stroke, or a #cetz-link("basics/styling", [CeTZ style]). If auto, defaults to the whole diagram's default style. -> auto | color | stroke | dictionary
+  style: auto,
+) = {
   import "@preview/lambdabus:0.1.0": parsing
   let parsed-function = function
   if type(parsed-function) == str {
