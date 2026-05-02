@@ -13,7 +13,7 @@
 #align(center, [
   #text([= `trompet`], 24pt)
 
-  A #link("https://typst.app", [Typst]) package for building pedigrees, built on top of #link("https://typst.app/universe/package/lambdabus/", [Lambdabus]) and #link("https://typst.app/universe/package/cetz/", [CeTZ])
+  A #link("https://typst.app", [Typst]) package for making Tromp lambda diagrams, built on top of #link("https://typst.app/universe/package/lambdabus/", [Lambdabus]) and #link("https://typst.app/universe/package/cetz/", [CeTZ])
 
   #link("https://github.com/CrowdingFaun624/trompet", `github.com/CrowdingFaun624/trompet`)
 
